@@ -231,12 +231,17 @@ st.markdown("""
     .status-dot { width: 7px; height: 7px; background: #22C78B; border-radius: 50%; margin-right: 8px; }
     .topbar-title { font-size: 0.85rem; font-weight: 500; color: #1E1B3A; }
 
-    /* Streamlit default chat input - TAMAMEN GIZLE */
+    /* Streamlit default chat input - Ekranda gizle ama DOM'da aktif bırak (JS için gerekli) */
     [data-testid="stBottom"],
     [data-testid="stBottomBlockContainer"],
     .stChatFloatingInputContainer,
     div[data-testid="stChatInput"],
-    [data-testid="stChatInput"] { display: none !important; }
+    [data-testid="stChatInput"] { 
+        position: fixed !important;
+        bottom: -9999px !important;
+        opacity: 0 !important;
+        z-index: -9999 !important;
+    }
 
     /* CUSTOM FIXED INPUT BAR */
     #custom-input-bar {
@@ -626,34 +631,33 @@ st.markdown("""
         var val = (field ? field.value : '').trim();
         if (!val) return;
 
-        // Streamlit'in orjinal gizli textarea'sını bul
-        var ta = document.querySelector('[data-testid="stChatInput"] textarea') 
-                 || document.querySelector('[data-testid="stChatInputTextArea"]');
+        // Streamlit'in orjinal textarea'sını bul
+        var ta = document.querySelector('[data-testid="stChatInputTextArea"]');
 
         if (ta) {
             // React'in inputu algılayabilmesi için native setter kullanıyoruz
             var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
             nativeInputValueSetter.call(ta, val);
 
-            // React'e yazının değiştiğini bildir (Bu adım, Streamlit Gönder butonunu aktif eder)
+            // React'e yazının değiştiğini bildir
             ta.dispatchEvent(new Event('input', { bubbles: true }));
 
             // Kendi görsel inputumuzu temizleyelim
             field.value = '';
 
-            // React'in state'i güncelleyip butonu aktif hale getirmesi için 150ms bekliyoruz
+            // React'in state'i güncelleyebilmesi için 100ms bekleyip Enter'ı tetikliyoruz
             setTimeout(function() {
-                // Enter tuşu simülasyonu yerine direkt Streamlit Gönder butonuna tıklıyoruz
-                var sendBtn = document.querySelector('[data-testid="stChatInput"] button');
+                // Öncelik: Enter tuşunu simüle et
+                ta.dispatchEvent(new KeyboardEvent('keydown', {
+                    key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true
+                }));
+
+                // Yedek: Streamlit'in submit butonuna tıkla
+                var sendBtn = document.querySelector('[data-testid="stChatInputSubmitButton"]');
                 if (sendBtn) {
                     sendBtn.click();
-                } else {
-                    // Olur da buton bulunamazsa yedek plan olarak Enter tuşunu fırlat
-                    ta.dispatchEvent(new KeyboardEvent('keydown', {
-                        key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true
-                    }));
                 }
-            }, 150); 
+            }, 100); 
         }
     }
 
@@ -663,7 +667,7 @@ st.markdown("""
     document.addEventListener('keydown', function(e) {
         var field = document.getElementById('custom-input-field');
         if (field && document.activeElement === field && e.key === 'Enter') {
-            e.preventDefault(); // Sayfanın yenilenmesini engelle
+            e.preventDefault();
             doSend();
         }
     }, true);
@@ -671,7 +675,7 @@ st.markdown("""
 </script>
 """, unsafe_allow_html=True)
 
-# Streamlit'in gerçek chat_input (gizli ama çalışır - CSS ile display:none)
+# Streamlit'in gerçek chat_input (gizli ama çalışır - CSS ile görünmez yapıldı)
 if prompt := st.chat_input("_"):
     st.session_state.queued_prompt = prompt
     st.rerun()
