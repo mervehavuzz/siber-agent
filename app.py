@@ -669,7 +669,6 @@ st.markdown("""
     }, true);
 })();
 </script>
-
 """, unsafe_allow_html=True)
 
 # Streamlit'in gerçek chat_input (gizli ama çalışır - CSS ile display:none)
