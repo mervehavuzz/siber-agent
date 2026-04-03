@@ -53,7 +53,7 @@ st.markdown("""
         color: #1E1B3A !important;
     }
 
-    /* Hide sidebar toggle — aggressive, covers tooltip too */
+    /* Hide sidebar toggle — target material icon text too */
     button[data-testid="baseButton-headerNoPadding"],
     [data-testid="collapsedControl"],
     [data-testid="stSidebarCollapsedControl"],
@@ -68,11 +68,27 @@ st.markdown("""
     .st-emotion-cache-1gulkj5,
     [class*="collapsedControl"],
     [class*="SidebarCollapse"],
-    [class*="sidebarCollapse"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; overflow: hidden !important; }
+    [class*="sidebarCollapse"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
 
     /* Kill any floating button near sidebar edge */
     section[data-testid="stSidebar"] + div > button,
     section[data-testid="stSidebar"] + section > button { display: none !important; }
+
+    /* Hide the material-icons span that shows "keyboard_double_arrow_left" text */
+    .material-icons-sharp,
+    .material-symbols-sharp,
+    span.material-icons,
+    span[class*="material"] { display: none !important; }
 
     /* ── SIDEBAR ── */
     section[data-testid="stSidebar"] {
@@ -140,7 +156,7 @@ st.markdown("""
     }
     .block-container {
         max-width: 960px !important;
-        padding-top: 1.5rem !important;
+        padding-top: 0.2rem !important;
         padding-bottom: 160px !important;
         padding-left: 2rem !important;
         padding-right: 2rem !important;
@@ -231,7 +247,8 @@ st.markdown("""
         font-weight: 700;
         font-size: 1.9rem;
         color: #1E1B3A;
-        margin-bottom: 0.15rem;
+        margin-top: 0.2rem !important;
+        margin-bottom: 0.1rem;
     }
 
     /* ── TOPBAR ── */
@@ -255,13 +272,13 @@ st.markdown("""
         padding: 10px 16px 3px;
     }
 
-    /* ── DISCLAIMER ── */
+    /* ── DISCLAIMER — shown below chat input ── */
     .disclaimer {
         text-align: center;
-        font-size: 0.68rem;
+        font-size: 0.65rem;
         color: #9896B8;
-        margin-top: 4px;
-        padding-bottom: 6px;
+        padding: 0.3rem 1rem 0;
+        line-height: 1.4;
     }
 
     /* ── CHAT INPUT — completely remove default and rebuild ── */
@@ -319,40 +336,55 @@ st.markdown("""
         background: linear-gradient(135deg, #9180FF, #6B5FD6) !important;
     }
 
-    /* Bottom container — push input well above watermark */
+    /* Bottom container — input sits above watermark, disclaimer fits in gap below */
     [data-testid="stBottomBlockContainer"] {
-        padding-bottom: 1.2rem !important;
+        padding-bottom: 3.5rem !important;
         padding-top: 0.4rem !important;
         background: linear-gradient(to top, #F4F3FF 85%, transparent) !important;
-        margin-bottom: 60px !important;
+        margin-bottom: 0 !important;
     }
 
     #scroll-bottom { height: 1px; }
 </style>
 """, unsafe_allow_html=True)
 
-# Kill the sidebar collapse button via JS (tooltip "keyboard_double_arrow_left" etc.)
+# Kill the sidebar collapse button via JS — targets material icon text nodes too
 st.markdown("""
 <script>
 (function() {
     function killSidebarBtn() {
-        // Target by data-testid
+        // 1. Target by data-testid
         ['collapsedControl','stSidebarCollapsedControl'].forEach(function(id) {
             var el = document.querySelector('[data-testid="' + id + '"]');
-            if (el) { el.style.cssText = 'display:none!important;'; }
+            if (el) { el.remove(); }
         });
-        // Target any button whose text content contains "keyboard"
-        document.querySelectorAll('button').forEach(function(btn) {
-            var txt = (btn.textContent || btn.getAttribute('aria-label') || btn.getAttribute('title') || '');
-            if (txt.toLowerCase().includes('keyboard')) {
-                btn.style.cssText = 'display:none!important;';
-                var p = btn.parentElement;
-                if (p) p.style.cssText = 'display:none!important;';
+        // 2. Hide any element whose text content is exactly the material icon name
+        var keywords = ['keyboard_double_arrow_left','keyboard_double_arrow_right','keyboard_arrow_left','keyboard_arrow_right'];
+        document.querySelectorAll('button, span, div').forEach(function(el) {
+            var txt = (el.textContent || '').trim();
+            var label = (el.getAttribute('aria-label') || '');
+            var title = (el.getAttribute('title') || '');
+            var combined = (txt + label + title).toLowerCase();
+            if (keywords.some(function(k){ return combined.includes(k); })) {
+                var target = el.closest('button') || el.closest('[data-testid]') || el;
+                target.style.cssText = 'display:none!important;width:0!important;height:0!important;overflow:hidden!important;position:absolute!important;left:-9999px!important;';
             }
         });
+        // 3. Any button right after sidebar
+        var sb = document.querySelector('section[data-testid="stSidebar"]');
+        if (sb) {
+            var sibling = sb.nextElementSibling;
+            while (sibling) {
+                var btns = sibling.querySelectorAll('button');
+                btns.forEach(function(b){ b.style.cssText = 'display:none!important;'; });
+                sibling = sibling.nextElementSibling;
+            }
+        }
     }
-    // Run immediately and keep watching
-    killSidebarBtn();
+    // Run on load + watch DOM
+    document.addEventListener('DOMContentLoaded', killSidebarBtn);
+    setTimeout(killSidebarBtn, 100);
+    setTimeout(killSidebarBtn, 500);
     var obs = new MutationObserver(killSidebarBtn);
     obs.observe(document.body, { childList: true, subtree: true });
 })();
@@ -624,7 +656,7 @@ else:
                 st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("<div style='height:0.3rem'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:0.1rem'></div>", unsafe_allow_html=True)
 
     chips = [
         ("📄 Dilekçe",       "Siber suç için resmi dilekçe oluşturmama yardım et."),
