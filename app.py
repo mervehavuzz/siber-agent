@@ -6,8 +6,6 @@ from datetime import datetime
 
 # ==========================================
 # 1. SAYFA AYARLARI
-# keyboard_double butonu "expanded" modda render ediliyor.
-# Çözüm: collapsed baslat, JS ile hemen ac, butonu DOM'dan sil.
 # ==========================================
 st.set_page_config(
     page_title="Siber Hukuk Asistanı",
@@ -314,11 +312,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# JS: Sidebar'ı ac, keyboard butonunu sil
+# JS: Sidebar'ı ac, keyboard butonunu sil (Yazı sızmasını önlemek için gizli div eklendi)
 # ==========================================
 st.markdown("""
+<div style="display:none;">
 <script>
-(function() {
+function initSidebarFix() {
     var SIDEBAR_KEYWORDS = [
         'keyboard_double_arrow_left',
         'keyboard_double_arrow_right',
@@ -328,13 +327,11 @@ st.markdown("""
     ];
 
     function removeKeyboardBtn() {
-        // collapsedControl data-testid'li elementleri sil
         ['collapsedControl', 'stSidebarCollapsedControl'].forEach(function(tid) {
             var el = document.querySelector('[data-testid="' + tid + '"]');
             if (el && el.parentNode) el.parentNode.removeChild(el);
         });
 
-        // Tum buton ve span'lara bak, keyboard iceren metni olani sil
         document.querySelectorAll('button, span, div').forEach(function(el) {
             var txt = (el.textContent || el.innerText || '').trim().toLowerCase();
             var aria = (el.getAttribute('aria-label') || '').toLowerCase();
@@ -350,7 +347,6 @@ st.markdown("""
             }
         });
 
-        // Sidebar'i her zaman acik tut
         var sb = document.querySelector('section[data-testid="stSidebar"]');
         if (sb) {
             sb.style.transform = 'translateX(0)';
@@ -360,40 +356,18 @@ st.markdown("""
         }
     }
 
-    // Custom input icin: Streamlit chat input'u bul ve tetikle
-    window.sendToStreamlit = function(val) {
-        if (!val || !val.trim()) return;
-        // Streamlit'in gizli textarea'sini bul
-        var ta = document.querySelector('textarea[data-testid="stChatInputTextArea"]');
-        if (!ta) ta = document.querySelector('[data-testid="stChatInput"] textarea');
-        if (!ta) ta = document.querySelector('textarea');
-        if (ta) {
-            var setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-            setter.call(ta, val);
-            ta.dispatchEvent(new Event('input', { bubbles: true }));
-            ta.dispatchEvent(new Event('change', { bubbles: true }));
-            setTimeout(function() {
-                ta.dispatchEvent(new KeyboardEvent('keydown', {
-                    key: 'Enter', keyCode: 13, which: 13,
-                    code: 'Enter', bubbles: true, cancelable: true
-                }));
-                ta.dispatchEvent(new KeyboardEvent('keyup', {
-                    key: 'Enter', keyCode: 13, bubbles: true
-                }));
-            }, 50);
-        }
-    };
-
     removeKeyboardBtn();
     setTimeout(removeKeyboardBtn, 100);
     setTimeout(removeKeyboardBtn, 300);
     setTimeout(removeKeyboardBtn, 800);
     setTimeout(removeKeyboardBtn, 2000);
 
-    var obs = new MutationObserver(function() { removeKeyboardBtn(); });
+    var obs = new MutationObserver(removeKeyboardBtn);
     obs.observe(document.body, { childList: true, subtree: true });
-})();
+}
+initSidebarFix();
 </script>
+</div>
 """, unsafe_allow_html=True)
 
 # ==========================================
@@ -606,8 +580,6 @@ else:
 
 # ==========================================
 # 9. CUSTOM CHAT INPUT + DISCLAIMER
-# Streamlit'in input'u CSS ile gizlendi.
-# Altta sabit HTML input bar + disclaimer.
 # ==========================================
 st.markdown("""
 <div id="custom-input-bar">
@@ -624,55 +596,51 @@ st.markdown("""
         ⚠️ Bu platform hukuki tavsiye niteliği taşımamaktadır. Yalnızca genel rehberlik amaçlıdır. Hukuki süreçler için bir avukana danışmanız önerilir.
     </div>
 </div>
+<div style="display:none;">
 <script>
-(function() {
-    function doSend() {
-        var field = document.getElementById('custom-input-field');
-        var val = (field ? field.value : '').trim();
-        if (!val) return;
+function doSend() {
+    var field = document.getElementById('custom-input-field');
+    var val = (field ? field.value : '').trim();
+    if (!val) return;
 
-        // Streamlit'in orjinal textarea'sını bul
-        var ta = document.querySelector('[data-testid="stChatInputTextArea"]');
+    // Streamlit textarea bul
+    var ta = document.querySelector('[data-testid="stChatInput"] textarea');
+    if (ta) {
+        // Native React value setter
+        var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+        nativeSetter.call(ta, val);
+        
+        // React'i tetikle
+        ta.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // Görsel inputu temizle
+        field.value = '';
 
-        if (ta) {
-            // React'in inputu algılayabilmesi için native setter kullanıyoruz
-            var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
-            nativeInputValueSetter.call(ta, val);
-
-            // React'e yazının değiştiğini bildir
-            ta.dispatchEvent(new Event('input', { bubbles: true }));
-
-            // Kendi görsel inputumuzu temizleyelim
-            field.value = '';
-
-            // React'in state'i güncelleyebilmesi için 100ms bekleyip Enter'ı tetikliyoruz
-            setTimeout(function() {
-                // Öncelik: Enter tuşunu simüle et
+        // Gönderme işlemini tetikle
+        setTimeout(function() {
+            var btn = document.querySelector('[data-testid="stChatInput"] button');
+            if (btn) {
+                btn.disabled = false;
+                btn.click();
+            } else {
                 ta.dispatchEvent(new KeyboardEvent('keydown', {
                     key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true
                 }));
-
-                // Yedek: Streamlit'in submit butonuna tıkla
-                var sendBtn = document.querySelector('[data-testid="stChatInputSubmitButton"]');
-                if (sendBtn) {
-                    sendBtn.click();
-                }
-            }, 100); 
-        }
+            }
+        }, 100); 
     }
+}
+window.doSend = doSend;
 
-    window.doSend = doSend;
-
-    // Enter tuşunu dinle
-    document.addEventListener('keydown', function(e) {
-        var field = document.getElementById('custom-input-field');
-        if (field && document.activeElement === field && e.key === 'Enter') {
-            e.preventDefault();
-            doSend();
-        }
-    }, true);
-})();
+document.addEventListener('keydown', function(e) {
+    var field = document.getElementById('custom-input-field');
+    if (field && document.activeElement === field && e.key === 'Enter') {
+        e.preventDefault();
+        doSend();
+    }
+}, true);
 </script>
+</div>
 """, unsafe_allow_html=True)
 
 # Streamlit'in gerçek chat_input (gizli ama çalışır - CSS ile görünmez yapıldı)
