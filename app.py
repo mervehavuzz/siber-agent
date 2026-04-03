@@ -53,17 +53,26 @@ st.markdown("""
         color: #1E1B3A !important;
     }
 
-    /* Hide sidebar toggle */
+    /* Hide sidebar toggle — aggressive, covers tooltip too */
     button[data-testid="baseButton-headerNoPadding"],
     [data-testid="collapsedControl"],
-    button[title*="keyboard"],
-    button[aria-label*="keyboard"],
-    section[data-testid="stSidebar"] ~ div > button,
+    [data-testid="stSidebarCollapsedControl"],
     div[data-testid="stSidebarCollapsedControl"],
+    button[title*="keyboard"],
+    button[title*="Keyboard"],
+    button[aria-label*="keyboard"],
+    button[aria-label*="Keyboard"],
+    section[data-testid="stSidebar"] ~ div > button,
     button[kind="header"],
     .st-emotion-cache-dvne4q,
     .st-emotion-cache-1gulkj5,
-    [class*="collapsedControl"] { display: none !important; }
+    [class*="collapsedControl"],
+    [class*="SidebarCollapse"],
+    [class*="sidebarCollapse"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; overflow: hidden !important; }
+
+    /* Kill any floating button near sidebar edge */
+    section[data-testid="stSidebar"] + div > button,
+    section[data-testid="stSidebar"] + section > button { display: none !important; }
 
     /* ── SIDEBAR ── */
     section[data-testid="stSidebar"] {
@@ -83,9 +92,9 @@ st.markdown("""
         color: #E0DEFF !important;
     }
 
-    /* New analysis button */
+    /* New analysis button — neon purple */
     section[data-testid="stSidebar"] .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #7C6EFA 0%, #534AB7 100%) !important;
+        background: linear-gradient(135deg, #A259FF 0%, #6B2FFA 100%) !important;
         border: none !important;
         border-radius: 10px !important;
         font-weight: 600 !important;
@@ -93,11 +102,11 @@ st.markdown("""
         color: #FFFFFF !important;
         letter-spacing: 0.02em !important;
         padding: 0.5rem 1rem !important;
-        box-shadow: 0 4px 14px rgba(124,110,250,0.35) !important;
+        box-shadow: 0 4px 18px rgba(162,89,255,0.55), 0 0 0 1px rgba(162,89,255,0.2) !important;
     }
     section[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
-        background: linear-gradient(135deg, #9180FF 0%, #6B5FD6 100%) !important;
-        box-shadow: 0 6px 18px rgba(124,110,250,0.5) !important;
+        background: linear-gradient(135deg, #B36FFF 0%, #7C3FFF 100%) !important;
+        box-shadow: 0 6px 24px rgba(162,89,255,0.7), 0 0 0 1px rgba(162,89,255,0.3) !important;
     }
 
     /* Sidebar plain buttons */
@@ -130,9 +139,11 @@ st.markdown("""
         background-color: #F4F3FF !important;
     }
     .block-container {
-        max-width: 820px !important;
+        max-width: 960px !important;
         padding-top: 1.5rem !important;
-        padding-bottom: 100px !important;
+        padding-bottom: 160px !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
     }
 
     /* ── MESAJ BALONLARI ── */
@@ -145,8 +156,10 @@ st.markdown("""
         background: linear-gradient(135deg, #534AB7 0%, #7C6EFA 100%) !important;
         color: #FFFFFF !important;
         border-radius: 18px 18px 4px 18px !important;
-        padding: 10px 16px !important;
-        display: inline-block !important;
+        padding: 12px 20px !important;
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
         box-shadow: 0 2px 12px rgba(83,74,183,0.25) !important;
     }
     div[data-testid="stMarkdownContainer"]:has(.usr-msg) p,
@@ -158,8 +171,11 @@ st.markdown("""
         background-color: #FFFFFF !important;
         border: 1px solid #E8E4FF !important;
         border-radius: 4px 18px 18px 18px !important;
-        padding: 12px 18px !important;
+        padding: 14px 20px !important;
         color: #1E1B3A !important;
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
         box-shadow: 0 2px 8px rgba(83,74,183,0.07) !important;
     }
     div[data-testid="stMarkdownContainer"]:has(.ast-msg) p,
@@ -303,15 +319,44 @@ st.markdown("""
         background: linear-gradient(135deg, #9180FF, #6B5FD6) !important;
     }
 
-    /* Bottom container positioning */
+    /* Bottom container — push input well above watermark */
     [data-testid="stBottomBlockContainer"] {
-        padding-bottom: 0.5rem !important;
-        padding-top: 0.3rem !important;
-        background: linear-gradient(to top, #F4F3FF 80%, transparent) !important;
+        padding-bottom: 1.2rem !important;
+        padding-top: 0.4rem !important;
+        background: linear-gradient(to top, #F4F3FF 85%, transparent) !important;
+        margin-bottom: 60px !important;
     }
 
     #scroll-bottom { height: 1px; }
 </style>
+""", unsafe_allow_html=True)
+
+# Kill the sidebar collapse button via JS (tooltip "keyboard_double_arrow_left" etc.)
+st.markdown("""
+<script>
+(function() {
+    function killSidebarBtn() {
+        // Target by data-testid
+        ['collapsedControl','stSidebarCollapsedControl'].forEach(function(id) {
+            var el = document.querySelector('[data-testid="' + id + '"]');
+            if (el) { el.style.cssText = 'display:none!important;'; }
+        });
+        // Target any button whose text content contains "keyboard"
+        document.querySelectorAll('button').forEach(function(btn) {
+            var txt = (btn.textContent || btn.getAttribute('aria-label') || btn.getAttribute('title') || '');
+            if (txt.toLowerCase().includes('keyboard')) {
+                btn.style.cssText = 'display:none!important;';
+                var p = btn.parentElement;
+                if (p) p.style.cssText = 'display:none!important;';
+            }
+        });
+    }
+    // Run immediately and keep watching
+    killSidebarBtn();
+    var obs = new MutationObserver(killSidebarBtn);
+    obs.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
 """, unsafe_allow_html=True)
 
 # ==========================================
