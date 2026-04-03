@@ -132,11 +132,11 @@ def group_by_date(db: dict) -> dict:
     return groups
 
 # ─────────────────────────────────────────
-# URL PARAM → AKSİYON  (Yeni Analiz & Load)
+# URL PARAM → AKSİYON
 # ─────────────────────────────────────────
-params     = st.query_params
-sb_action  = params.get("sb_action", None)
-sb_cid     = params.get("sb_cid", None)
+params    = st.query_params
+sb_action = params.get("sb_action", None)
+sb_cid    = params.get("sb_cid", None)
 
 if sb_action == "new":
     new_chat()
@@ -150,7 +150,7 @@ elif sb_action == "load" and sb_cid:
 # ─────────────────────────────────────────
 # GLOBAL CSS
 # ─────────────────────────────────────────
-SIDEBAR_W = 260   # piksel — tek yerden yönetim
+SB = 260   # sidebar genişliği — tek yerden yönetim
 
 st.markdown(f"""
 <style>
@@ -163,7 +163,7 @@ html, body, .stApp {{
     color: #18172B !important;
 }}
 
-/* ── Streamlit chrome'u gizle ── */
+/* Streamlit chrome gizle */
 section[data-testid="stSidebar"]                 {{ display:none!important; }}
 header[data-testid="stHeader"]                   {{ display:none!important; }}
 [data-testid="stToolbar"]                        {{ display:none!important; }}
@@ -175,22 +175,23 @@ button[data-testid="baseButton-headerNoPadding"] {{ display:none!important; }}
 footer                                           {{ display:none!important; }}
 [data-testid="stStatusWidget"]                   {{ display:none!important; }}
 
-/* ── Ana içerik alanı: sidebar kadar sol margin, dikey olarak yukarı ── */
+/* Ana içerik alanı */
 [data-testid="stAppViewContainer"] > section.main {{
-    margin-left: {SIDEBAR_W}px !important;
+    margin-left: {SB}px !important;
 }}
-/* DEĞİŞİKLİK 1: padding-top azaltıldı (3-4 cm yukarı), sağ taraf daraltıldı */
+
+/* block-container: ortalı, üstten sıkı, altta input+disclaimer için boşluk */
 .block-container {{
-    max-width: 700px !important;          /* ← sağdan daraltıldı (820→700) */
+    max-width: 740px !important;
     margin: 0 auto !important;
-    padding: 0.4rem 1.5rem 140px 1.5rem !important;  /* ← üst padding azaltıldı */
+    padding: 0.5rem 2rem 170px 2rem !important;
 }}
 
 /* ── CUSTOM SIDEBAR ── */
 #custom-sidebar {{
     position: fixed;
     top: 0; left: 0;
-    width: {SIDEBAR_W}px;
+    width: {SB}px;
     height: 100vh;
     background: linear-gradient(160deg, #5B2FD9 0%, #7C3FFC 40%, #6A2EE8 100%);
     box-shadow: 4px 0 32px rgba(124,63,252,0.35);
@@ -229,8 +230,8 @@ footer                                           {{ display:none!important; }}
     display: flex; align-items: center; justify-content: center;
     font-size: 0.72rem; font-weight: 800; color: #fff; flex-shrink: 0;
 }}
-.sb-name  {{ font-size: 0.88rem; font-weight: 700; color: #fff; line-height: 1.2; }}
-.sb-role  {{ font-size: 0.65rem; color: rgba(255,255,255,0.65); margin-top: 2px; }}
+.sb-name {{ font-size: 0.88rem; font-weight: 700; color: #fff; line-height: 1.2; }}
+.sb-role {{ font-size: 0.65rem; color: rgba(255,255,255,0.65); margin-top: 2px; }}
 
 .sb-new-wrap {{ padding: 14px 12px 10px; flex-shrink: 0; }}
 .sb-new-btn {{
@@ -300,41 +301,54 @@ footer                                           {{ display:none!important; }}
     padding: 13px 18px !important; box-shadow: 0 1px 6px rgba(80,70,180,.07) !important;
 }}
 
-/* ── Welcome ── */
+/* ── Welcome ekranı ── */
 .wlc-title {{
     font-size: 2rem; font-weight: 700; color: #18172B;
-    text-align: center; margin: 1.2rem 0 0.3rem; letter-spacing: -0.02em;
+    text-align: center; margin: 1rem 0 0.3rem; letter-spacing: -0.02em;
 }}
-.wlc-sub {{ text-align: center; color: #6B6890; font-size: 0.86rem; margin-bottom: 1.4rem; }}
+.wlc-sub {{ text-align: center; color: #6B6890; font-size: 0.86rem; margin-bottom: 1.2rem; }}
+
+/* Kart wrapper: kartın üstüne invisible Streamlit butonu bindiriliyor */
+.card-outer {{
+    position: relative;
+    margin-bottom: 10px;
+}}
 .sug-card {{
-    background: #fff; border: 1.5px solid #E4E0FF; border-radius: 12px;
-    padding: 12px 14px; margin-bottom: 0;
+    background: #fff;
+    border: 1.5px solid #E4E0FF;
+    border-radius: 12px;
+    padding: 12px 14px;
+    pointer-events: none;   /* tıklamayı üstteki butona bırak */
 }}
 .sug-icon  {{ font-size: 1.1rem; margin-bottom: 4px; }}
 .sug-title {{ font-size: 0.82rem; font-weight: 600; color: #18172B; line-height: 1.3; }}
 .sug-desc  {{ font-size: 0.69rem; color: #7B78A0; margin-top: 2px; line-height: 1.45; }}
-/* DEĞİŞİKLİK 2: card-btn tamamen invisible ama tıklanabilir */
-.card-btn {{ position: relative; }}
+
+/* Kart üzerine binen Streamlit butonu: tamamen şeffaf ama tam boyut */
+.card-btn > div > button,
 .card-btn button {{
-    opacity: 0 !important;
     position: absolute !important;
     inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
     min-height: unset !important;
+    opacity: 0 !important;
     border: none !important;
     background: transparent !important;
+    cursor: pointer !important;
     margin: 0 !important;
     padding: 0 !important;
-    cursor: pointer !important;
     z-index: 10 !important;
 }}
+
+/* chip butonları */
 .chip-row button {{
     background: #fff !important; color: #5B3FD9 !important;
     border: 1.5px solid #D4CFFF !important; border-radius: 100px !important;
     padding: 5px 14px !important; font-size: 0.75rem !important; font-weight: 500 !important;
 }}
 .chip-row button:hover {{ background: #EDE9FF !important; border-color: #7C5CFC !important; }}
+
 .chat-topbar {{
     display: flex; align-items: center; gap: 8px;
     padding: 4px 0 14px; border-bottom: 1px solid #E4E0FF; margin-bottom: 10px;
@@ -342,23 +356,37 @@ footer                                           {{ display:none!important; }}
 .chat-topbar-dot {{ width: 7px; height: 7px; background: #22D49A; border-radius: 50%; flex-shrink: 0; }}
 .chat-topbar-title {{ font-size: 0.83rem; font-weight: 500; color: #18172B; }}
 
-/* ── Chat input (Streamlit native) ── */
-/* DEĞİŞİKLİK 3: input bar sağa taşınmış, genişliği chat alanıyla eşleştirilmiş */
+/* ── Chat input + disclaimer sabit alt bar ── */
 [data-testid="stBottom"],
 [data-testid="stBottomBlockContainer"] {{
     position: fixed !important;
     bottom: 0 !important;
-    left: {SIDEBAR_W}px !important;
+    left: {SB}px !important;
     right: 0 !important;
     background: #F8F7FF !important;
     border-top: 1px solid #E4E0FF !important;
-    padding: 6px 24px 6px !important;
+    /* üstten disclaimer yazısı için padding bırak */
+    padding: 0 !important;
     z-index: 999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}}
+/* Disclaimer: input'un hemen üstünde, bar içinde */
+[data-testid="stBottomBlockContainer"]::before {{
+    content: "⚠️ Bu platform hukuki tavsiye niteliği taşımamaktadır. Yalnızca genel rehberlik amaçlıdır. Hukuki süreçler için bir avukana danışmanız önerilir.";
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.58rem;
+    color: #A8A5C8;
+    text-align: center;
+    padding: 5px 24px 2px;
+    line-height: 1.4;
 }}
 [data-testid="stBottomBlockContainer"] .block-container {{
-    max-width: 700px !important;
-    padding: 0 !important;
+    max-width: 740px !important;
+    padding: 6px 24px 10px !important;
     margin: 0 auto !important;
+    width: 100% !important;
 }}
 [data-testid="stChatInput"] {{
     background: #fff !important;
@@ -380,23 +408,23 @@ footer                                           {{ display:none!important; }}
 }}
 [data-testid="stChatInput"] textarea::placeholder {{ color: #AAA7CC !important; }}
 [data-testid="stChatInput"] button {{
-    background: linear-gradient(135deg,#7C5CFC,#5038C8) !important;
+    background: linear-gradient(135deg, #7C5CFC, #5038C8) !important;
     border: none !important; border-radius: 8px !important;
     width: 34px !important; min-width: 34px !important; height: 34px !important;
     box-shadow: 0 2px 8px rgba(90,75,200,.35) !important; color: #fff !important;
 }}
 [data-testid="stChatInput"] button:hover {{
-    background: linear-gradient(135deg,#8F70FF,#6348E0) !important;
+    background: linear-gradient(135deg, #8F70FF, #6348E0) !important;
 }}
 [data-testid="stChatInput"] button svg {{ fill: #fff !important; stroke: #fff !important; }}
 </style>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
-# CUSTOM SIDEBAR RENDER
+# CUSTOM SIDEBAR
 # ─────────────────────────────────────────
-db_sb    = load_db()
-grouped  = group_by_date(db_sb)
+db_sb      = load_db()
+grouped    = group_by_date(db_sb)
 current_id = st.session_state.chat_id
 
 history_html = ""
@@ -410,16 +438,15 @@ else:
             continue
         history_html += f"<span class='sb-group-label'>{grp}</span>"
         for cid in cids:
-            msgs_s  = db_sb.get(cid, [])
-            lbl     = (msgs_s[0].get("title") or msgs_s[0]["content"][:22] + "…") if msgs_s else "Analiz"
+            msgs_s   = db_sb.get(cid, [])
+            lbl      = (msgs_s[0].get("title") or msgs_s[0]["content"][:22] + "…") if msgs_s else "Analiz"
             lbl_safe = lbl.replace("'", "\\'").replace('"', "&quot;")
-            active  = "sb-active" if cid == current_id else ""
+            active   = "sb-active" if cid == current_id else ""
             history_html += (
                 f"<button class='sb-chat-btn {active}' "
                 f"onclick=\"goLoad('{cid}')\">💬 {lbl_safe}</button>"
             )
 
-# DEĞİŞİKLİK 4: goNew() artık Streamlit session_state'i güncelliyor (query_params üzerinden)
 st.markdown(f"""
 <div id="custom-sidebar">
   <div class="sb-header">
@@ -433,16 +460,11 @@ st.markdown(f"""
       </div>
     </div>
   </div>
-
   <div class="sb-new-wrap">
     <button class="sb-new-btn" onclick="goNew()">＋&nbsp;&nbsp;Yeni Analiz</button>
   </div>
-
   <div class="sb-divider"></div>
-
-  <div class="sb-history">
-    {history_html}
-  </div>
+  <div class="sb-history">{history_html}</div>
 </div>
 
 <script>
@@ -471,7 +493,6 @@ if pending:
 in_chat = bool(st.session_state.messages) or bool(pending)
 
 if not in_chat:
-    # DEĞİŞİKLİK 5: Welcome ekranı içeriği tam ortalanmış
     st.markdown('<h1 class="wlc-title">⚖️ Siber Hukuk Portalı</h1>', unsafe_allow_html=True)
     st.markdown('<p class="wlc-sub">Hukuki vakayı veya dijital haklarınızı yazın, analiz edelim.</p>', unsafe_allow_html=True)
 
@@ -481,23 +502,29 @@ if not in_chat:
         ("📱", "Sosyal Medya Hukuku", "İnternette hakaret ve iftira davası nasıl açılır?"),
         ("🏛️", "Şikayet Dilekçesi",  "BTK'ya şikayet dilekçesi nasıl hazırlanır?"),
     ]
+
     c1, c2 = st.columns(2, gap="small")
     for i, (icon, title, desc) in enumerate(CARDS):
         col = c1 if i % 2 == 0 else c2
         with col:
+            # card-outer: relative konteynır — kart + üzerine binen buton
             st.markdown(f"""
-            <div class="sug-card" style="position:relative;">
+            <div class="card-outer">
+              <div class="sug-card">
                 <div class="sug-icon">{icon}</div>
                 <div class="sug-title">{title}</div>
                 <div class="sug-desc">{desc}</div>
-            </div>""", unsafe_allow_html=True)
+              </div>
+            """, unsafe_allow_html=True)
+            # Streamlit butonu card-outer içine absolute konumlanıyor
             st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
             if st.button(title, key=f"card_{i}"):
                 st.session_state.queued = desc
                 st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)  # card-outer kapat
 
-    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
 
     CHIPS = [
         ("📄 Dilekçe", "Siber suç için resmi dilekçe oluşturmama yardım et."),
@@ -533,32 +560,6 @@ else:
 
     if pending:
         process_message(pending)
-
-# ─────────────────────────────────────────
-# DEĞİŞİKLİK 6: Disclaimer chatin hemen altında, input üstünde
-# bottom değeri: input bar yüksekliği (~54px) + küçük boşluk
-# ─────────────────────────────────────────
-st.markdown(f"""
-<div style="
-    position: fixed;
-    bottom: 54px;
-    left: {SIDEBAR_W}px;
-    right: 0;
-    text-align: center;
-    font-size: 0.59rem;
-    color: #A8A5C8;
-    font-family: 'DM Sans', sans-serif;
-    pointer-events: none;
-    z-index: 998;
-    padding: 0 24px 4px;
-    background: #F8F7FF;
-    border-top: 1px solid #EEEAFF;
-    line-height: 1.5;
-">
-⚠️ Bu platform hukuki tavsiye niteliği taşımamaktadır. Yalnızca genel rehberlik amaçlıdır.
-Hukuki süreçler için bir avukana danışmanız önerilir.
-</div>
-""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
 # CHAT INPUT
