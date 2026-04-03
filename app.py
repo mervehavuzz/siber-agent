@@ -37,8 +37,9 @@ def save_db(data):
 # ==========================================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
-    * { font-family: 'DM Sans', sans-serif !important; }
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    * { font-family: 'Sora', sans-serif !important; }
 
     header[data-testid="stHeader"],
     [data-testid="stToolbar"],
@@ -48,87 +49,105 @@ st.markdown("""
     .stAppDeployButton { display: none !important; }
 
     html, body, [class*="css"], .stApp, [data-testid="stAppViewContainer"] {
-        background-color: #FFFFFF !important;
-        color: #1E293B !important;
+        background-color: #F4F3FF !important;
+        color: #1E1B3A !important;
     }
 
-    /* Hide sidebar toggle buttons */
+    /* Hide sidebar toggle */
     button[data-testid="baseButton-headerNoPadding"],
     [data-testid="collapsedControl"],
     button[title*="keyboard"],
     button[aria-label*="keyboard"],
     section[data-testid="stSidebar"] ~ div > button,
-    div[data-testid="stSidebarCollapsedControl"] {
-        display: none !important;
-    }
-    button[kind="header"] { display: none !important; }
-    .st-emotion-cache-dvne4q, .st-emotion-cache-1gulkj5, [class*="collapsedControl"] { display: none !important; }
+    div[data-testid="stSidebarCollapsedControl"],
+    button[kind="header"],
+    .st-emotion-cache-dvne4q,
+    .st-emotion-cache-1gulkj5,
+    [class*="collapsedControl"] { display: none !important; }
 
     /* ── SIDEBAR ── */
     section[data-testid="stSidebar"] {
-        width: 260px !important;
-        min-width: 260px !important;
-        max-width: 260px !important;
+        width: 272px !important;
+        min-width: 272px !important;
+        max-width: 272px !important;
     }
     section[data-testid="stSidebar"] > div:first-child {
-        width: 260px !important;
-        background-color: #FAFAFA !important;
-        border-right: 0.5px solid #E5E7EB !important;
-        padding-top: 1rem !important;
+        width: 272px !important;
+        background: linear-gradient(160deg, #1E1B3A 0%, #2D2860 60%, #3B357A 100%) !important;
+        border-right: none !important;
+        padding: 0 !important;
     }
 
+    /* Sidebar all text override */
+    section[data-testid="stSidebar"] * {
+        color: #E0DEFF !important;
+    }
+
+    /* New analysis button */
+    section[data-testid="stSidebar"] .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #7C6EFA 0%, #534AB7 100%) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        font-size: 0.82rem !important;
+        color: #FFFFFF !important;
+        letter-spacing: 0.02em !important;
+        padding: 0.5rem 1rem !important;
+        box-shadow: 0 4px 14px rgba(124,110,250,0.35) !important;
+    }
+    section[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #9180FF 0%, #6B5FD6 100%) !important;
+        box-shadow: 0 6px 18px rgba(124,110,250,0.5) !important;
+    }
+
+    /* Sidebar plain buttons */
     section[data-testid="stSidebar"] .stButton > button:not([kind="primary"]) {
         border: none !important;
         background: transparent !important;
         box-shadow: none !important;
-    }
-
-    section[data-testid="stSidebar"] .stButton > button[kind="primary"],
-    section[data-testid="stSidebar"] button[kind="primary"] {
-        background-color: #534AB7 !important;
-        border: 1px solid #534AB7 !important;
-        border-radius: 8px !important;
-        font-weight: 500 !important;
-        font-size: 0.85rem !important;
-        color: #FFFFFF !important;
-    }
-
-    /* ── GEÇMİŞ İTEMLERİ ── */
-    .history-btn > button {
         text-align: left !important;
-        font-size: 0.8rem !important;
-        color: #4B5563 !important;
-        border-radius: 6px !important;
-        padding: 6px 10px !important;
+        font-size: 0.78rem !important;
+        color: #B8B0F0 !important;
+        border-radius: 8px !important;
+        padding: 7px 12px !important;
         width: 100% !important;
-        border: none !important;
-        background: transparent !important;
+        transition: background 0.15s !important;
     }
-    .history-btn > button:hover {
-        background: #F1F5F9 !important;
-        color: #1E293B !important;
+    section[data-testid="stSidebar"] .stButton > button:not([kind="primary"]):hover {
+        background: rgba(255,255,255,0.08) !important;
+        color: #E0DEFF !important;
     }
-    .history-btn-active > button {
-        background: #EEEDFE !important;
-        color: #534AB7 !important;
+    .history-btn-active .stButton > button:not([kind="primary"]) {
+        background: rgba(124,110,250,0.25) !important;
+        color: #D4CFFF !important;
         font-weight: 600 !important;
-        border-left: 3px solid #534AB7 !important;
-        border-radius: 6px !important;
-        padding-left: 10px !important;
+        border-left: 3px solid #7C6EFA !important;
+        border-radius: 0 8px 8px 0 !important;
+    }
+
+    /* ── MAIN CONTENT BACKGROUND ── */
+    [data-testid="stAppViewContainer"] > section:last-child {
+        background-color: #F4F3FF !important;
+    }
+    .block-container {
+        max-width: 820px !important;
+        padding-top: 1.5rem !important;
+        padding-bottom: 100px !important;
     }
 
     /* ── MESAJ BALONLARI ── */
     [data-testid="stChatMessage"] {
         background-color: transparent !important;
-        padding: 0.5rem 0 !important;
+        padding: 0.4rem 0 !important;
     }
 
     div[data-testid="stMarkdownContainer"]:has(.usr-msg) {
-        background-color: #534AB7 !important;
+        background: linear-gradient(135deg, #534AB7 0%, #7C6EFA 100%) !important;
         color: #FFFFFF !important;
-        border-radius: 14px 14px 14px 4px !important;
-        padding: 12px 18px !important;
+        border-radius: 18px 18px 4px 18px !important;
+        padding: 10px 16px !important;
         display: inline-block !important;
+        box-shadow: 0 2px 12px rgba(83,74,183,0.25) !important;
     }
     div[data-testid="stMarkdownContainer"]:has(.usr-msg) p,
     div[data-testid="stMarkdownContainer"]:has(.usr-msg) li {
@@ -137,53 +156,35 @@ st.markdown("""
 
     div[data-testid="stMarkdownContainer"]:has(.ast-msg) {
         background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 4px 14px 14px 14px !important;
-        padding: 14px 20px !important;
-        color: #1E293B !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+        border: 1px solid #E8E4FF !important;
+        border-radius: 4px 18px 18px 18px !important;
+        padding: 12px 18px !important;
+        color: #1E1B3A !important;
+        box-shadow: 0 2px 8px rgba(83,74,183,0.07) !important;
     }
     div[data-testid="stMarkdownContainer"]:has(.ast-msg) p,
     div[data-testid="stMarkdownContainer"]:has(.ast-msg) li,
     div[data-testid="stMarkdownContainer"]:has(.ast-msg) strong {
-        color: #1E293B !important;
+        color: #1E1B3A !important;
     }
 
-    /* ── INPUT AREA ── */
-    [data-testid="stBottomBlockContainer"],
-    [data-testid="stBottom"],
-    .stChatFloatingInputContainer {
-        background-color: #FFFFFF !important;
-        background: #FFFFFF !important;
-    }
-    div[data-testid="stChatInput"] {
-        background-color: #FFFFFF !important;
-        padding-bottom: 1rem !important;
-    }
-    [data-testid="stChatInput"] textarea {
-        background-color: #F8FAFC !important;
-        color: #1E293B !important;
-        border-radius: 12px !important;
-        border: 1px solid #E2E8F0 !important;
-    }
-    [data-testid="stChatInput"] button {
-        background-color: #534AB7 !important;
-        color: white !important;
-    }
-
-    .block-container { max-width: 860px !important; padding-top: 1rem !important; padding-bottom: 0 !important; }
-
-    /* ── WELCOME CARDS (compact) ── */
+    /* ── WELCOME CARDS ── */
     .welcome-card {
         background: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 10px !important;
-        padding: 8px 12px !important;
-        margin-bottom: 4px !important;
+        border: 1px solid #E2DDFF !important;
+        border-radius: 12px !important;
+        padding: 10px 14px !important;
+        margin-bottom: 6px !important;
+        box-shadow: 0 1px 4px rgba(83,74,183,0.06) !important;
+        cursor: pointer;
     }
-    .welcome-card-icon  { font-size: 1rem; margin-bottom: 2px; display: block; }
-    .welcome-card-title { font-size: 0.82rem; font-weight: 600; color: #1E293B; line-height: 1.3; }
-    .welcome-card-desc  { font-size: 0.71rem; color: #64748B; margin-top: 2px; line-height: 1.4; overflow: visible; }
+    .welcome-card:hover {
+        border-color: #B8AEFF !important;
+        box-shadow: 0 3px 12px rgba(83,74,183,0.12) !important;
+    }
+    .welcome-card-icon  { font-size: 1rem; margin-bottom: 3px; display: block; }
+    .welcome-card-title { font-size: 0.82rem; font-weight: 600; color: #1E1B3A; line-height: 1.3; }
+    .welcome-card-desc  { font-size: 0.7rem; color: #6E6B8A; margin-top: 2px; line-height: 1.4; }
 
     .card-trigger .stButton > button {
         margin-top: -2px !important;
@@ -197,28 +198,119 @@ st.markdown("""
     .chip-wrap .stButton > button {
         background: #FFFFFF !important;
         color: #534AB7 !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid #D4CFFF !important;
         border-radius: 20px !important;
-        padding: 6px 14px !important;
+        padding: 5px 12px !important;
+        font-size: 0.76rem !important;
+        box-shadow: 0 1px 3px rgba(83,74,183,0.08) !important;
+    }
+    .chip-wrap .stButton > button:hover {
+        background: #F0EEFF !important;
+        border-color: #A89EFF !important;
     }
 
-    .portal-title { text-align: center; font-weight: 700; font-size: 2rem; color: #0F172A; margin-bottom: 0.2rem; }
+    /* ── PORTAL TITLE ── */
+    .portal-title {
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.9rem;
+        color: #1E1B3A;
+        margin-bottom: 0.15rem;
+    }
 
-    .topbar { display: flex; align-items: center; padding: 8px 0 14px; border-bottom: 0.5px solid #E2E8F0; margin-bottom: 6px; }
-    .status-dot { width: 7px; height: 7px; background: #1D9E75; border-radius: 50%; margin-right: 8px; }
-    .topbar-title { font-size: 0.88rem; font-weight: 500; color: #1E293B; }
+    /* ── TOPBAR ── */
+    .topbar {
+        display: flex;
+        align-items: center;
+        padding: 6px 0 12px;
+        border-bottom: 1px solid #E2DDFF;
+        margin-bottom: 8px;
+    }
+    .status-dot { width: 7px; height: 7px; background: #22C78B; border-radius: 50%; margin-right: 8px; box-shadow: 0 0 6px rgba(34,199,139,0.5); }
+    .topbar-title { font-size: 0.85rem; font-weight: 500; color: #1E1B3A; }
 
-    .sb-section-label { font-size: 0.59rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; padding: 10px 2px 3px; }
+    /* ── SIDEBAR SECTION LABEL ── */
+    .sb-section-label {
+        font-size: 0.58rem;
+        font-weight: 700;
+        color: #7870C0 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 10px 16px 3px;
+    }
 
-    .disclaimer { text-align: center; font-size: 0.7rem; color: #94A3B8; margin-top: 6px; }
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+        text-align: center;
+        font-size: 0.68rem;
+        color: #9896B8;
+        margin-top: 4px;
+        padding-bottom: 6px;
+    }
+
+    /* ── CHAT INPUT — completely remove default and rebuild ── */
+    [data-testid="stBottomBlockContainer"],
+    [data-testid="stBottom"],
+    .stChatFloatingInputContainer,
+    div[data-testid="stChatInput"] {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    /* The actual textarea wrapper */
+    [data-testid="stChatInput"] > div {
+        background: #FFFFFF !important;
+        border: 1.5px solid #D4CFFF !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 20px rgba(83,74,183,0.10) !important;
+        padding: 2px 6px !important;
+        max-height: 52px !important;
+    }
+    [data-testid="stChatInput"] > div:focus-within {
+        border-color: #7C6EFA !important;
+        box-shadow: 0 4px 20px rgba(124,110,250,0.18) !important;
+    }
+
+    [data-testid="stChatInput"] textarea {
+        background: transparent !important;
+        color: #1E1B3A !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        font-size: 0.84rem !important;
+        padding: 10px 8px !important;
+        max-height: 42px !important;
+        min-height: 42px !important;
+        resize: none !important;
+    }
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #A8A4C8 !important;
+    }
+    [data-testid="stChatInput"] button {
+        background: linear-gradient(135deg, #7C6EFA, #534AB7) !important;
+        color: white !important;
+        border-radius: 10px !important;
+        width: 34px !important;
+        height: 34px !important;
+        min-height: 34px !important;
+        border: none !important;
+        margin: 4px !important;
+        box-shadow: 0 2px 8px rgba(83,74,183,0.3) !important;
+    }
+    [data-testid="stChatInput"] button:hover {
+        background: linear-gradient(135deg, #9180FF, #6B5FD6) !important;
+    }
+
+    /* Bottom container positioning */
+    [data-testid="stBottomBlockContainer"] {
+        padding-bottom: 0.5rem !important;
+        padding-top: 0.3rem !important;
+        background: linear-gradient(to top, #F4F3FF 80%, transparent) !important;
+    }
+
     #scroll-bottom { height: 1px; }
-
-    /* Sidebar header styles */
-    .sb-header { padding: 0 4px 12px 4px; }
-    .sb-project-label { font-size: 0.65rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-    .sb-bot-name { font-size: 1rem; font-weight: 700; color: #1E293B; margin-bottom: 10px; }
-    .sb-owner { font-size: 0.75rem; color: #64748B; margin-bottom: 14px; }
-    .sb-owner span { font-weight: 600; color: #1E293B; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -238,12 +330,11 @@ except Exception as e:
 # ==========================================
 # 5. SESSION STATE
 # ==========================================
-db = load_db()
-
 if "current_chat_id" not in st.session_state:
     st.session_state.current_chat_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 if "messages" not in st.session_state:
-    st.session_state.messages = db.get(st.session_state.current_chat_id, [])
+    db_init = load_db()
+    st.session_state.messages = db_init.get(st.session_state.current_chat_id, [])
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(history=[])
 if "queued_prompt" not in st.session_state:
@@ -269,36 +360,96 @@ def group_chats_by_date(chat_dict):
             groups["Eskiler"].append(cid)
     return groups
 
-def scroll_to_bottom():
-    st.markdown("""
-        <script>
-            window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
-            setTimeout(() => window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'}), 300);
-        </script>
-    """, unsafe_allow_html=True)
-
 # ==========================================
 # 7. SOL MENÜ (SIDEBAR)
 # ==========================================
 with st.sidebar:
+    # ── Modern Sidebar Header ──
     st.markdown("""
-        <div class='sb-header'>
-            <div class='sb-project-label'>Bilişim Güvenliği Teknolojisi Bitirme Projesi</div>
-            <div class='sb-bot-name'>⚖️ Siber Hukuk Botu</div>
-            <div class='sb-owner'>Proje Sahibi: <span>Merve Havuz</span></div>
+        <div style="
+            background: linear-gradient(135deg, rgba(124,110,250,0.15) 0%, rgba(83,74,183,0.08) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 20px 16px 18px 16px;
+            margin-bottom: 4px;
+        ">
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 6px;
+            ">
+                <div style="
+                    width: 3px;
+                    height: 32px;
+                    background: linear-gradient(to bottom, #7C6EFA, #534AB7);
+                    border-radius: 2px;
+                    flex-shrink: 0;
+                "></div>
+                <div>
+                    <div style="
+                        font-size: 0.55rem;
+                        font-weight: 700;
+                        color: #7C6EFA !important;
+                        text-transform: uppercase;
+                        letter-spacing: 0.12em;
+                        line-height: 1.2;
+                        margin-bottom: 2px;
+                    ">Bilişim Güvenliği Teknolojisi<br>Bitirme Projesi</div>
+                    <div style="
+                        font-size: 1.05rem;
+                        font-weight: 700;
+                        color: #FFFFFF !important;
+                        line-height: 1.2;
+                    ">⚖️ Siber Hukuk Botu</div>
+                </div>
+            </div>
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                padding: 8px 10px;
+                background: rgba(255,255,255,0.06);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 10px;
+            ">
+                <div style="
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #7C6EFA, #534AB7);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.65rem;
+                    font-weight: 700;
+                    color: white !important;
+                    flex-shrink: 0;
+                ">MH</div>
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #E0DEFF !important; line-height: 1.2;">Merve Havuz</div>
+                    <div style="font-size: 0.62rem; color: #9B97D4 !important;">Proje Sahibi</div>
+                </div>
+            </div>
         </div>
     """, unsafe_allow_html=True)
 
-    if st.button("＋ Yeni Analiz Oluştur", type="primary", use_container_width=True):
-        st.session_state.current_chat_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # ── New Chat Button ──
+    st.markdown("<div style='padding: 12px 12px 8px;'>", unsafe_allow_html=True)
+    if st.button("＋  Yeni Analiz Oluştur", type="primary", use_container_width=True):
+        new_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+        st.session_state.current_chat_id = new_id
         st.session_state.messages = []
         st.session_state.chat_session = model.start_chat(history=[])
         st.session_state.queued_prompt = ""
         st.session_state.scroll_to_bottom = False
         st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='border:none;border-top:0.5px solid #E5E7EB;margin:10px 0;'>", unsafe_allow_html=True)
+    # Divider
+    st.markdown("<div style='height:1px;background:rgba(255,255,255,0.08);margin:0 16px;'></div>", unsafe_allow_html=True)
 
+    # ── Chat History — always re-read DB so it stays fresh ──
     t_db = load_db()
     grouped = group_chats_by_date(t_db)
 
@@ -309,11 +460,15 @@ with st.sidebar:
 
         for cid in cids:
             is_active = cid == st.session_state.current_chat_id
-            title = (t_db[cid][0].get("title") or t_db[cid][0]["content"][:22]) if t_db[cid] else "Analiz"
-            active_cls = "history-btn-active" if is_active else "history-btn"
+            msgs = t_db.get(cid, [])
+            if msgs:
+                title = msgs[0].get("title") or msgs[0]["content"][:24]
+            else:
+                title = "Analiz"
 
-            st.markdown(f"<div class='{active_cls}'>", unsafe_allow_html=True)
-            if st.button(title, key=f"ch_{cid}", use_container_width=True):
+            if is_active:
+                st.markdown("<div class='history-btn-active'>", unsafe_allow_html=True)
+            if st.button(f"💬  {title}", key=f"ch_{cid}", use_container_width=True):
                 st.session_state.current_chat_id = cid
                 st.session_state.messages = t_db[cid]
                 history_for_ai = []
@@ -324,10 +479,11 @@ with st.sidebar:
                 st.session_state.queued_prompt = ""
                 st.session_state.scroll_to_bottom = False
                 st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
+            if is_active:
+                st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 8. ANA EKRAN & AI YÜRÜTME
+# 8. ANA EKRAN
 # ==========================================
 chat_active = bool(st.session_state.messages) or bool(st.session_state.queued_prompt)
 
@@ -344,11 +500,13 @@ if chat_active:
         </div>
     """, unsafe_allow_html=True)
 
+    # Render existing messages
     for i, msg in enumerate(st.session_state.messages):
         with st.chat_message(msg["role"], avatar="👤" if msg["role"] == "user" else "⚖️"):
             marker = "<div class='usr-msg'></div>" if msg["role"] == "user" else "<div class='ast-msg'></div>"
             st.markdown(marker + msg["content"], unsafe_allow_html=True)
 
+    # Process queued prompt
     if st.session_state.queued_prompt:
         prompt = st.session_state.queued_prompt
         st.session_state.queued_prompt = ""
@@ -360,11 +518,7 @@ if chat_active:
 
         with st.chat_message("assistant", avatar="⚖️"):
             placeholder = st.empty()
-            placeholder.markdown("<div class='ast-msg'></div>" + """
-                <div style='color:#94A3B8;font-size:0.85rem;padding:4px 0;'>
-                    ⚖️ &nbsp;Analiz ediliyor...
-                </div>
-            """, unsafe_allow_html=True)
+            placeholder.markdown("<div class='ast-msg'></div><span style='color:#9B97D4;font-size:0.82rem;'>⚖️ Analiz ediliyor...</span>", unsafe_allow_html=True)
 
             try:
                 full_prompt = f"{SISTEM_PROMPTU}\n\nKullanıcı Sorusu: {prompt}"
@@ -380,6 +534,8 @@ if chat_active:
                     st.session_state.messages[0]["title"] = prompt[:25]
 
                 st.session_state.messages.append({"role": "assistant", "content": full_res})
+
+                # Save to DB immediately so history updates
                 fresh_db = load_db()
                 fresh_db[st.session_state.current_chat_id] = st.session_state.messages
                 save_db(fresh_db)
@@ -387,19 +543,17 @@ if chat_active:
 
             except Exception as e:
                 placeholder.markdown("")
-                st.error(f"⚠️ API Hatası Detayı: {e}")
+                st.error(f"⚠️ API Hatası: {e}")
                 st.session_state.messages.pop()
 
         st.rerun()
 
     st.markdown("<div id='scroll-bottom'></div>", unsafe_allow_html=True)
-    if st.session_state.scroll_to_bottom:
-        scroll_to_bottom()
-        st.session_state.scroll_to_bottom = False
 
 else:
+    # ── Welcome Screen ──
     st.markdown('<h1 class="portal-title">⚖️ Siber Hukuk Portalı</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align:center;color:#64748B;margin-bottom:1rem;font-size:0.88rem;">Hukuki vakayı veya dijital haklarınızı yazın.</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align:center;color:#6E6B8A;margin-bottom:1rem;font-size:0.85rem;">Hukuki vakayı veya dijital haklarınızı yazın.</p>', unsafe_allow_html=True)
 
     welcome_items = [
         ("🔒", "KVKK İhlali",        "Kişisel veri ihlali durumunda ne yapmalıyım?"),
@@ -408,7 +562,7 @@ else:
         ("🏛️", "Şikayet Dilekçesi",  "BTK'ya şikayet dilekçesi nasıl hazırlanır?"),
     ]
 
-    col_a, col_b = st.columns(2)
+    col_a, col_b = st.columns(2, gap="small")
     for idx, (icon, title, desc) in enumerate(welcome_items):
         col = col_a if idx % 2 == 0 else col_b
         with col:
@@ -425,26 +579,25 @@ else:
                 st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:0.3rem'></div>", unsafe_allow_html=True)
 
     chips = [
-        ("📄 Dilekçe oluştur",  "Siber suç için resmi dilekçe oluşturmama yardım et."),
-        ("⏱ Başvuru süresi?",   "Siber suçlarda başvuru ve dava açma süreleri nedir?"),
-        ("💰 Ceza miktarı?",    "Siber suçlarda öngörülen ceza miktarları nedir?"),
-        ("🔍 Kanun maddeleri",  "Türkiye'de siber suçlarla ilgili kanun maddeleri nelerdir?"),
+        ("📄 Dilekçe",       "Siber suç için resmi dilekçe oluşturmama yardım et."),
+        ("⏱ Süre?",          "Siber suçlarda başvuru ve dava açma süreleri nedir?"),
+        ("💰 Ceza?",         "Siber suçlarda öngörülen ceza miktarları nedir?"),
+        ("🔍 Kanun",         "Türkiye'de siber suçlarla ilgili kanun maddeleri nelerdir?"),
     ]
     st.markdown("<div class='chip-wrap'>", unsafe_allow_html=True)
-    chip_cols = st.columns(len(chips))
+    chip_cols = st.columns(len(chips), gap="small")
     for col, (label, question) in zip(chip_cols, chips):
         with col:
             if st.button(label, key=f"chip_{label}"):
                 st.session_state.queued_prompt = question
                 st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
 # ==========================================
-# 9. SOHBET GİRDİSİ (Alt Çubuk)
+# 9. SOHBET GİRDİSİ
 # ==========================================
 if prompt := st.chat_input("Hukuki vakayı buraya yazın..."):
     st.session_state.queued_prompt = prompt
@@ -452,6 +605,6 @@ if prompt := st.chat_input("Hukuki vakayı buraya yazın..."):
 
 st.markdown("""
     <div class='disclaimer'>
-        ⚠️ Bu platform hukuki tavsiye niteliği taşımamaktadır. Bilgiler yalnızca genel rehberlik amaçlıdır. Hukuki süreçler için bir avukana danışmanız önerilir.
+        ⚠️ Bu platform hukuki tavsiye niteliği taşımamaktadır. Yalnızca genel rehberlik amaçlıdır. Hukuki süreçler için bir avukana danışmanız önerilir.
     </div>
 """, unsafe_allow_html=True)
