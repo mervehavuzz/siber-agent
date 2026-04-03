@@ -54,7 +54,7 @@ st.markdown("""
         color: #1E1B3A !important;
     }
 
-    /* Sidebar collapse/expand butonunu tamamen gizle */
+    /* Sidebar collapse butonunu gizle */
     [data-testid="collapsedControl"],
     [data-testid="stSidebarCollapsedControl"],
     div[data-testid="stSidebarCollapsedControl"],
@@ -70,7 +70,7 @@ st.markdown("""
         top: -9999px !important;
     }
 
-    /* SIDEBAR - daima acik ve sabit */
+    /* SIDEBAR - daima açık ve sabit */
     section[data-testid="stSidebar"] {
         width: 272px !important;
         min-width: 272px !important;
@@ -93,14 +93,14 @@ st.markdown("""
         overflow-y: auto !important;
     }
 
-    /* Ana icerik sidebar'in saginda baslasin */
+    /* Ana içerik sidebar'ın sağında başlasın */
     [data-testid="stAppViewContainer"] {
         padding-left: 272px !important;
     }
 
     section[data-testid="stSidebar"] * { color: #E0DEFF !important; }
 
-    /* Yeni Analiz butonu - neon mor */
+    /* Yeni Analiz butonu */
     section[data-testid="stSidebar"] .stButton > button[kind="primary"] {
         background: linear-gradient(135deg, #A259FF 0%, #6B2FFA 100%) !important;
         border: none !important;
@@ -154,7 +154,7 @@ st.markdown("""
         max-width: 900px !important;
         margin: 0 auto !important;
         padding-top: 0.5rem !important;
-        padding-bottom: 120px !important;
+        padding-bottom: 130px !important;
         padding-left: 2rem !important;
         padding-right: 2rem !important;
     }
@@ -229,82 +229,85 @@ st.markdown("""
     .status-dot { width: 7px; height: 7px; background: #22C78B; border-radius: 50%; margin-right: 8px; }
     .topbar-title { font-size: 0.85rem; font-weight: 500; color: #1E1B3A; }
 
-    /* Streamlit default chat input - Ekranda gizle ama DOM'da aktif bırak (JS için gerekli) */
+    /* ============================================================
+       NATIVE STREAMLIT CHAT INPUT — CUSTOM STYLİNG
+       Artık gizlemiyoruz, doğrudan CSS ile tasarıma uyarlıyoruz.
+    ============================================================ */
+
+    /* Bottom bar container */
     [data-testid="stBottom"],
-    [data-testid="stBottomBlockContainer"],
-    .stChatFloatingInputContainer,
-    div[data-testid="stChatInput"],
-    [data-testid="stChatInput"] { 
+    [data-testid="stBottomBlockContainer"] {
         position: fixed !important;
-        bottom: -9999px !important;
-        opacity: 0 !important;
-        z-index: -9999 !important;
+        bottom: 0 !important;
+        left: 272px !important;
+        right: 0 !important;
+        background: #F4F3FF !important;
+        border-top: 1px solid #E2DDFF !important;
+        padding: 8px 24px 6px 24px !important;
+        z-index: 999 !important;
+        box-sizing: border-box !important;
     }
 
-    /* CUSTOM FIXED INPUT BAR */
-    #custom-input-bar {
-        position: fixed;
-        bottom: 0;
-        left: 272px;
-        right: 0;
-        background: #F4F3FF;
-        padding: 8px 24px 5px 24px;
-        z-index: 999;
-        border-top: 1px solid #E2DDFF;
+    /* İç wrapper — max genişlik */
+    [data-testid="stBottomBlockContainer"] .block-container {
+        max-width: 900px !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
     }
-    #custom-input-wrap {
-        display: flex;
-        align-items: center;
-        background: #FFFFFF;
-        border: 1.5px solid #D4CFFF;
-        border-radius: 14px;
-        box-shadow: 0 4px 20px rgba(83,74,183,0.10);
-        padding: 4px 8px 4px 14px;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    #custom-input-wrap:focus-within {
-        border-color: #7C6EFA;
-        box-shadow: 0 4px 20px rgba(124,110,250,0.18);
-    }
-    #custom-input-field {
-        flex: 1;
-        border: none;
-        outline: none;
-        background: transparent;
-        font-family: 'Sora', sans-serif;
-        font-size: 0.84rem;
-        color: #1E1B3A;
-        padding: 8px 4px;
-        height: 38px;
-    }
-    #custom-input-field::placeholder { color: #A8A4C8; }
-    #custom-send-btn {
-        background: linear-gradient(135deg, #7C6EFA, #534AB7);
-        border: none;
-        border-radius: 10px;
-        width: 36px;
-        height: 36px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(83,74,183,0.3);
-        flex-shrink: 0;
-        color: white;
-        font-size: 1rem;
-        line-height: 1;
-    }
-    #custom-send-btn:hover { background: linear-gradient(135deg, #9180FF, #6B5FD6); }
 
-    #input-disclaimer {
-        text-align: center;
-        font-size: 0.62rem;
-        color: #9896B8;
-        padding: 3px 0 1px;
-        max-width: 900px;
-        margin: 0 auto;
-        font-family: 'Sora', sans-serif;
+    /* Chat input dış kutu */
+    [data-testid="stChatInput"] {
+        background: #FFFFFF !important;
+        border: 1.5px solid #D4CFFF !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 20px rgba(83,74,183,0.10) !important;
+        padding: 2px 6px 2px 12px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    [data-testid="stChatInput"]:focus-within {
+        border-color: #7C6EFA !important;
+        box-shadow: 0 4px 20px rgba(124,110,250,0.18) !important;
+    }
+
+    /* Textarea içi */
+    [data-testid="stChatInput"] textarea {
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        font-family: 'Sora', sans-serif !important;
+        font-size: 0.84rem !important;
+        color: #1E1B3A !important;
+        padding: 8px 4px !important;
+        resize: none !important;
+    }
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #A8A4C8 !important;
+    }
+
+    /* Gönder butonu */
+    [data-testid="stChatInput"] button {
+        background: linear-gradient(135deg, #7C6EFA, #534AB7) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        width: 36px !important;
+        min-width: 36px !important;
+        height: 36px !important;
+        box-shadow: 0 2px 8px rgba(83,74,183,0.3) !important;
+        color: #FFFFFF !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+    }
+    [data-testid="stChatInput"] button:hover {
+        background: linear-gradient(135deg, #9180FF, #6B5FD6) !important;
+    }
+    [data-testid="stChatInput"] button svg {
+        fill: #FFFFFF !important;
+        stroke: #FFFFFF !important;
     }
 
     #scroll-bottom { height: 1px; }
@@ -312,41 +315,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# JS: Sidebar'ı ac, keyboard butonunu sil (Yazı sızmasını önlemek için gizli div eklendi)
+# JS: Sidebar'ı açık tut
 # ==========================================
 st.markdown("""
-<div style="display:none;">
+<div style="display:none;" id="sb-fix-wrapper">
 <script>
-function initSidebarFix() {
+(function() {
     var SIDEBAR_KEYWORDS = [
-        'keyboard_double_arrow_left',
-        'keyboard_double_arrow_right',
-        'keyboard_arrow_left',
-        'keyboard_arrow_right',
-        'keyboard'
+        'keyboard_double_arrow_left','keyboard_double_arrow_right',
+        'keyboard_arrow_left','keyboard_arrow_right','keyboard'
     ];
-
     function removeKeyboardBtn() {
-        ['collapsedControl', 'stSidebarCollapsedControl'].forEach(function(tid) {
+        ['collapsedControl','stSidebarCollapsedControl'].forEach(function(tid) {
             var el = document.querySelector('[data-testid="' + tid + '"]');
             if (el && el.parentNode) el.parentNode.removeChild(el);
         });
-
-        document.querySelectorAll('button, span, div').forEach(function(el) {
-            var txt = (el.textContent || el.innerText || '').trim().toLowerCase();
-            var aria = (el.getAttribute('aria-label') || '').toLowerCase();
-            var title = (el.getAttribute('title') || '').toLowerCase();
-            var all = txt + ' ' + aria + ' ' + title;
+        document.querySelectorAll('button,span,div').forEach(function(el) {
+            var all = ((el.textContent||'') + ' ' + (el.getAttribute('aria-label')||'') + ' ' + (el.getAttribute('title')||'')).toLowerCase();
             for (var i = 0; i < SIDEBAR_KEYWORDS.length; i++) {
                 if (all.indexOf(SIDEBAR_KEYWORDS[i]) !== -1) {
-                    var target = el.closest('button') || el;
-                    var parent = target.parentNode;
-                    if (parent) parent.removeChild(target);
+                    var t = el.closest('button') || el;
+                    if (t.parentNode) t.parentNode.removeChild(t);
                     break;
                 }
             }
         });
-
         var sb = document.querySelector('section[data-testid="stSidebar"]');
         if (sb) {
             sb.style.transform = 'translateX(0)';
@@ -355,17 +348,9 @@ function initSidebarFix() {
             sb.setAttribute('aria-expanded', 'true');
         }
     }
-
-    removeKeyboardBtn();
-    setTimeout(removeKeyboardBtn, 100);
-    setTimeout(removeKeyboardBtn, 300);
-    setTimeout(removeKeyboardBtn, 800);
-    setTimeout(removeKeyboardBtn, 2000);
-
-    var obs = new MutationObserver(removeKeyboardBtn);
-    obs.observe(document.body, { childList: true, subtree: true });
-}
-initSidebarFix();
+    [0,100,300,800,2000].forEach(function(t){ setTimeout(removeKeyboardBtn, t); });
+    new MutationObserver(removeKeyboardBtn).observe(document.body, {childList:true, subtree:true});
+})();
 </script>
 </div>
 """, unsafe_allow_html=True)
@@ -378,7 +363,7 @@ SISTEM_PROMPTU = "Sen uzman bir Siber Hukuk Asistanısın. Yanıtlarını resmi,
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=API_KEY)
-    model = genai.GenerativeModel('gemini-3-flash-preview')
+    model = genai.GenerativeModel('gemini-2.0-flash')
 except Exception as e:
     st.error("API Hatası! Lütfen Streamlit ayarlarını kontrol edin.")
     st.stop()
@@ -395,8 +380,6 @@ if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(history=[])
 if "queued_prompt" not in st.session_state:
     st.session_state.queued_prompt = ""
-if "scroll_to_bottom" not in st.session_state:
-    st.session_state.scroll_to_bottom = False
 
 # ==========================================
 # 6. YARDIMCI FONKSİYONLAR
@@ -467,7 +450,10 @@ with st.sidebar:
             if st.button(f"💬  {title}", key=f"ch_{cid}", use_container_width=True):
                 st.session_state.current_chat_id = cid
                 st.session_state.messages = t_db[cid]
-                history_for_ai = [{"role": "user" if m["role"]=="user" else "model", "parts": [m["content"]]} for m in t_db[cid]]
+                history_for_ai = [
+                    {"role": "user" if m["role"] == "user" else "model", "parts": [m["content"]]}
+                    for m in t_db[cid]
+                ]
                 st.session_state.chat_session = model.start_chat(history=history_for_ai)
                 st.session_state.queued_prompt = ""
                 st.rerun()
@@ -497,6 +483,7 @@ if chat_active:
             marker = "<div class='usr-msg'></div>" if msg["role"] == "user" else "<div class='ast-msg'></div>"
             st.markdown(marker + msg["content"], unsafe_allow_html=True)
 
+    # Kuyruktaki prompt varsa işle
     if st.session_state.queued_prompt:
         prompt = st.session_state.queued_prompt
         st.session_state.queued_prompt = ""
@@ -507,7 +494,10 @@ if chat_active:
 
         with st.chat_message("assistant", avatar="⚖️"):
             placeholder = st.empty()
-            placeholder.markdown("<div class='ast-msg'></div><span style='color:#9B97D4;font-size:0.82rem;'>⚖️ Analiz ediliyor...</span>", unsafe_allow_html=True)
+            placeholder.markdown(
+                "<div class='ast-msg'></div><span style='color:#9B97D4;font-size:0.82rem;'>⚖️ Analiz ediliyor...</span>",
+                unsafe_allow_html=True
+            )
             try:
                 full_prompt = f"{SISTEM_PROMPTU}\n\nKullanıcı Sorusu: {prompt}"
                 response = st.session_state.chat_session.send_message(full_prompt, stream=True)
@@ -524,7 +514,6 @@ if chat_active:
                 fresh_db = load_db()
                 fresh_db[st.session_state.current_chat_id] = st.session_state.messages
                 save_db(fresh_db)
-                st.session_state.scroll_to_bottom = True
             except Exception as e:
                 placeholder.markdown("")
                 st.error(f"⚠️ API Hatası: {e}")
@@ -536,7 +525,11 @@ if chat_active:
 
 else:
     st.markdown('<h1 class="portal-title">⚖️ Siber Hukuk Portalı</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align:center;color:#6E6B8A;margin-bottom:0.8rem;font-size:0.85rem;">Hukuki vakayı veya dijital haklarınızı yazın.</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p style="text-align:center;color:#6E6B8A;margin-bottom:0.8rem;font-size:0.85rem;">'
+        'Hukuki vakayı veya dijital haklarınızı yazın.</p>',
+        unsafe_allow_html=True
+    )
 
     welcome_items = [
         ("🔒", "KVKK İhlali",        "Kişisel veri ihlali durumunda ne yapmalıyım?"),
@@ -579,71 +572,29 @@ else:
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 9. CUSTOM CHAT INPUT + DISCLAIMER
+# 9. NATIVE CHAT INPUT + DİSCLAIMER
 # ==========================================
+
+# Disclaimer — native input'un hemen üstünde görünecek sabit alan
 st.markdown("""
-<div id="custom-input-bar">
-    <div id="custom-input-wrap">
-        <input
-            id="custom-input-field"
-            type="text"
-            placeholder="Hukuki vakayı buraya yazın..."
-            autocomplete="off"
-        />
-        <button id="custom-send-btn" onclick="doSend()">&#10148;</button>
-    </div>
-    <div id="input-disclaimer">
-        ⚠️ Bu platform hukuki tavsiye niteliği taşımamaktadır. Yalnızca genel rehberlik amaçlıdır. Hukuki süreçler için bir avukana danışmanız önerilir.
-    </div>
-</div>
-<div style="display:none;">
-<script>
-function doSend() {
-    var field = document.getElementById('custom-input-field');
-    var val = (field ? field.value : '').trim();
-    if (!val) return;
-
-    // Streamlit textarea bul
-    var ta = document.querySelector('[data-testid="stChatInput"] textarea');
-    if (ta) {
-        // Native React value setter
-        var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
-        nativeSetter.call(ta, val);
-        
-        // React'i tetikle
-        ta.dispatchEvent(new Event('input', { bubbles: true }));
-        
-        // Görsel inputu temizle
-        field.value = '';
-
-        // Gönderme işlemini tetikle
-        setTimeout(function() {
-            var btn = document.querySelector('[data-testid="stChatInput"] button');
-            if (btn) {
-                btn.disabled = false;
-                btn.click();
-            } else {
-                ta.dispatchEvent(new KeyboardEvent('keydown', {
-                    key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true
-                }));
-            }
-        }, 100); 
-    }
-}
-window.doSend = doSend;
-
-document.addEventListener('keydown', function(e) {
-    var field = document.getElementById('custom-input-field');
-    if (field && document.activeElement === field && e.key === 'Enter') {
-        e.preventDefault();
-        doSend();
-    }
-}, true);
-</script>
+<div style="
+    position: fixed;
+    bottom: 58px;
+    left: 272px;
+    right: 0;
+    text-align: center;
+    font-size: 0.62rem;
+    color: #9896B8;
+    font-family: 'Sora', sans-serif;
+    pointer-events: none;
+    z-index: 998;
+    padding: 0 24px;
+">
+⚠️ Bu platform hukuki tavsiye niteliği taşımamaktadır. Yalnızca genel rehberlik amaçlıdır. Hukuki süreçler için bir avukata danışmanız önerilir.
 </div>
 """, unsafe_allow_html=True)
 
-# Streamlit'in gerçek chat_input (gizli ama çalışır - CSS ile görünmez yapıldı)
-if prompt := st.chat_input("_"):
+# Streamlit'in native chat_input — artık gizlenmeden, sadece CSS ile özelleştirildi.
+if prompt := st.chat_input("Hukuki vakayı buraya yazın..."):
     st.session_state.queued_prompt = prompt
     st.rerun()
