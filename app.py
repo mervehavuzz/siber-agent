@@ -49,7 +49,13 @@ SYSTEM_PROMPT = (
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    _model = genai.GenerativeModel("gemini-1.5-flash")
+    
+    # "gemini-1.5-flash" yerine güncel stable sürüm olan "gemini-1.5-flash-latest" 
+    # veya spesifik olarak "models/gemini-1.5-flash" deneyebilirsin.
+    _model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash-latest",
+        system_instruction=SYSTEM_PROMPT
+    )
 except Exception as e:
     st.error(f"API Hatası: {e}")
     st.stop()
