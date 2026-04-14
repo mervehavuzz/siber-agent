@@ -49,7 +49,7 @@ SYSTEM_PROMPT = (
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    _model = genai.GenerativeModel("gemini-2.0-flash")
+    _model = genai.GenerativeModel("gemini-1.5-flash")
 except Exception as e:
     st.error(f"API Hatası: {e}")
     st.stop()
